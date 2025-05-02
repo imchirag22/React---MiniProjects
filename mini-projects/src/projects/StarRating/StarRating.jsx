@@ -1,38 +1,33 @@
-import React from 'react'
-import { useState } from 'react';
-import Star from './Star';
+import React, { useState } from 'react';
 
-
-const StarRating = ({ totalStars = 5, onRate }) => {
-
-    const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-
-  const handleMouseEnter = (idx) => setHoverRating(idx);
-  const handleMouseLeave = () => setHoverRating(0);
-  const handleClick = (idx) => {
-    setRating(idx);
-    if (onRate) onRate(idx);
-  };
+function StarRating({ maxRating = 5, onRatingChange,intialRating }) {
+  const [rating, setRating] = useState(intialRating);
+  const [hover, setHover] = useState(null);
 
   return (
-    <div className="flex space-x-1">
-    {Array.from({ length: totalStars }, (_, i) => {
-      const idx = i + 1;
-      return (
-        <Star
-          key={idx}
-          filled={hoverRating >= idx || (!hoverRating && rating >= idx)}
-          onMouseEnter={() => handleMouseEnter(idx)}
-          onMouseLeave={handleMouseLeave}
-          onClick={() => handleClick(idx)}
-        />
-      );
-    })}
-  </div>
-  )
+    <div className="flex gap-1 select-none" onMouseLeave={() => setHover(null)}>
+      {[...Array(maxRating)].map((_, index) => {
+        const starIndex = index + 1;
+        return (
+          <span
+            key={starIndex}
+            className={`text-2xl cursor-pointer ${
+              starIndex <= (hover ?? rating) ? 'text-yellow-500' : 'text-gray-300'
+            }`}
+            onMouseOver={() => setHover(starIndex)}
+            onClick={() => {
+              setRating(starIndex);
+              if (onRatingChange) {
+                onRatingChange(starIndex);
+              }
+            }}
+          >
+            ★
+          </span>
+        );
+      })}
+    </div>
+  );
 }
 
-export default StarRating
-
-  
+export default StarRating;
